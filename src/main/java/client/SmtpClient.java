@@ -18,9 +18,9 @@ public class SmtpClient {
     private String address;
     private int port;
 
-    public SmtpClient(String address, int port){
+    public SmtpClient(String address, String port){
         this.address = address;
-        this.port = port;
+        this.port = Integer.valueOf(port);
     }
 
     public void SendMessage(Message message) throws IOException{
@@ -31,28 +31,33 @@ public class SmtpClient {
 
         readAnswer();
 
+        // start by sending EHLO
         writer.println("EHLO" + address);
 
         while(line.startsWith("250")){
             readAnswer();
         }
 
+        // send from
         writer.println("MAIL FROM: <" + message.getFrom() + ">");
         writer.flush();
         readAnswer();
 
+        // send to
         for(String to : message.getTo()){
             writer.println("RCPT TO: <" + to + ">");
             writer.flush();
             readAnswer();
         }
 
+        // send cc
         for (String cc : message.getCc()){
             writer.println("RCPT TO: <" + cc + ">");
             writer.flush();
             readAnswer();
         }
 
+        // send data
         writer.println("DATA");
         writer.flush();
         readAnswer();
@@ -72,18 +77,21 @@ public class SmtpClient {
 
         readAnswer();
 
+        // close streams and socket
         writer.close();
         reader.close();
         clientSocket.close();
 
     }
 
+    // read the answer from server and log it
     public void readAnswer() throws IOException{
         line = reader.readLine();
         LOG.info(line);
     }
 
 
+    /*
     public static void main (String args[]) throws IOException{
         Message m = new Message();
 
@@ -96,5 +104,5 @@ public class SmtpClient {
         SmtpClient client = new SmtpClient("localhost", 2525);
         client.SendMessage(m);
 
-    }
+    }*/
 }

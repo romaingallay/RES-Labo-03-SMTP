@@ -1,97 +1,121 @@
+/**
+ * StmpClient class.
+ * @author Romain Gallay
+ * @author Labinot Rashiti
+ */
 package client;
 
 import model.*;
-
 import java.io.*;
 import java.net.Socket;
 import java.util.logging.Logger;
 
 public class SmtpClient {
+   
+   // Init part
+   private static final Logger LOG = Logger.getLogger(SmtpClient.class.getName());
+   Socket clientSocket = null;
+   BufferedReader reader = null;
+   PrintWriter writer = null;
 
-    private static final Logger LOG = Logger.getLogger(SmtpClient.class.getName());
+   private String line;
+   private String address;
+   private int port;
 
-    Socket clientSocket = null;
-    BufferedReader reader = null;
-    PrintWriter writer = null;
-    private String line;
+   // Constructor
+   public SmtpClient(String address, String port) {
+      this.address = address;
+      this.port = Integer.parseInt(port);
+   }
 
-    private String address;
-    private int port;
+   /**
+    * send a stmp message.
+    * @param message
+    * @throws IOException
+    */
+   public void sendMessage(Message message) throws IOException {
+      clientSocket = new Socket(address, port);
+      writer = new PrintWriter(new OutputStreamWriter(clientSocket.getOutputStream(), "UTF-8"), true);
+      reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), "UTF-8"));
+      read();
 
-    public SmtpClient(String address, String port){
-        this.address = address;
-        this.port = Integer.valueOf(port);
-    }
+      // start by sending EHLO
+      write("EHLO" + address);
 
-    public void SendMessage(Message message) throws IOException{
+      // get the 250 message
+      while (line.startsWith("250")) {
+         read();
+      }
 
-        clientSocket = new Socket(address, port);
-        writer = new PrintWriter(new OutputStreamWriter(clientSocket.getOutputStream(), "UTF-8"), true);
-        reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), "UTF-8"));
+      // send from
+      write("MAIL FROM: <" + message.getFrom() + ">");
+      read();
 
-        readAnswer();
+      // send to
+      for (String to : message.getTo()) {
+         write("RCPT TO: <" + to + ">");
+         read();
+      }
 
-        // start by sending EHLO
-        writer.println("EHLO" + address);
+      // send cc
+      for (String cc : message.getCc()) {
+         write("RCPT TO: <" + cc + ">");
+         read();
+      }
 
-        while(line.startsWith("250")){
-            readAnswer();
-        }
+      // send data
+      write("DATA");
+      read();
 
-        // send from
-        writer.println("MAIL FROM: <" + message.getFrom() + ">");
-        writer.flush();
-        readAnswer();
+      write("Content-Type: text/plain; charset=UTF-8");
+      write("From: " + message.getFrom());
+      write("To: " + String.join(",", message.getTo()));
 
-        // send to
-        for(String to : message.getTo()){
-            writer.println("RCPT TO: <" + to + ">");
-            writer.flush();
-            readAnswer();
-        }
+      if (message.getCc().length > 0) {
+         write("Cc: " + String.join(",", message.getCc()));
+      }
 
-        // send cc
-        for (String cc : message.getCc()){
-            writer.println("RCPT TO: <" + cc + ">");
-            writer.flush();
-            readAnswer();
-        }
+      write("Subject: " + message.getSubject());
+      write(message.getBody());
+      write(".");
+      read();
 
-        // send data
-        writer.println("DATA");
-        writer.flush();
-        readAnswer();
+      // close streams and socket
+      clean();
 
-        writer.println("Content-Type: text/plain; charset=UTF-8");
-        writer.println("From: " + message.getFrom());
-        writer.println("To: " + String.join(",", message.getTo()));
+   }
 
-        if(message.getCc().length > 0){
-            writer.println("Cc: " + String.join(",", message.getCc()));
-        }
+   /**
+    * read the answer from server and log it.
+    * @throws IOException 
+    */
+   public void read() throws IOException {
+      line = reader.readLine();
+      LOG.info(line);
+   }
 
-        writer.println("Subject: " + message.getSubject());
-        writer.println(message.getBody());
-        writer.println(".");
-        writer.flush();
+   /**
+    * write a request to the server.
+    * @param request
+    * @throws IOException 
+    */
+   public void write(String request) throws IOException {
+      writer.println(request);
+      writer.flush();
+      LOG.info(line);
+   }
 
-        readAnswer();
+   /**
+    * closes all the variables.
+    * @throws IOException 
+    */
+   public void clean() throws IOException {
+      writer.close();
+      reader.close();
+      clientSocket.close();
+   }
 
-        // close streams and socket
-        writer.close();
-        reader.close();
-        clientSocket.close();
-
-    }
-
-    // read the answer from server and log it
-    public void readAnswer() throws IOException{
-        line = reader.readLine();
-        LOG.info(line);
-    }
-
-
-    /*
+   /*
     public static void main (String args[]) throws IOException{
         Message m = new Message();
 

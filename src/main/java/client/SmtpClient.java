@@ -22,7 +22,11 @@ public class SmtpClient {
    private String address;
    private int port;
 
-   // Constructor
+   /**
+    * Constructor
+    * @param address ip address
+    * @param port port number
+    */
    public SmtpClient(String address, String port) {
       this.address = address;
       this.port = Integer.parseInt(port);
@@ -67,6 +71,7 @@ public class SmtpClient {
       write("DATA");
       read();
 
+      // send the charset and the core of the message
       write("Content-Type: text/plain; charset=UTF-8");
       write("From: " + message.getFrom());
       write("To: " + String.join(",", message.getTo()));
@@ -96,13 +101,13 @@ public class SmtpClient {
 
    /**
     * write a request to the server.
-    * @param request
+    * @param request message to server
     * @throws IOException 
     */
    public void write(String request) throws IOException {
       writer.println(request);
       writer.flush();
-      LOG.info(line);
+      LOG.info(request);
    }
 
    /**

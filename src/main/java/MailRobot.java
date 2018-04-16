@@ -49,7 +49,7 @@ public class MailRobot {
         m.setCc(new String[]{victims.get(4), victims.get(5)});
 
         try {
-            client.SendMessage(m);
+            client.sendMessage(m);
         } catch(IOException e){
             LOG.info(e.getMessage());
         }

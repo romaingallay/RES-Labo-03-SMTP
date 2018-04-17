@@ -80,7 +80,6 @@ public class SmtpClient {
          write("Cc: " + String.join(",", message.getCc()));
       }
 
-      write("Subject: " + message.getSubject());
       write(message.getBody());
       write(".");
       read();

@@ -16,19 +16,17 @@ public class Parser {
         BufferedReader reader = new BufferedReader(new FileReader(fileName));
         String line;
 
-        String message = "";
+        // iterate on the file
+        while ((line = reader.readLine()) != null) {
+            StringBuilder message = new StringBuilder();
 
-        while((line = reader.readLine()) != null){
-
-            message += line;
-            message += "\r\n";
-
-            if(line.startsWith("==")) {
-                messages.add(message);
-                message = "";
+            // iterate on the message itself
+            while (line != null && !line.equals("==")){
+                message.append(line + "\r\n");
+                line = reader.readLine();
             }
+            messages.add(message.toString());
         }
-        messages.add(message);
 
         return messages;
     }

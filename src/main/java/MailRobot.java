@@ -1,6 +1,8 @@
 
 import client.SmtpClient;
 import model.Message;
+import model.Person;
+import model.Prank;
 import utils.Parser;
 
 import javax.naming.NameParser;
@@ -27,37 +29,28 @@ public class MailRobot {
       Properties properties = null;
       ArrayList<String> victims = new ArrayList<>();
       ArrayList<String> bodyMessages = new ArrayList<>();
-      int r1 = (int) (Math.random() * 16 + 1);
-      int r2 = (int) (Math.random() * 16 + 1);
-      int r3 = (int) (Math.random() * 2 + 1);
 
+      // get config from files
       try {
          properties = parser.loadConfig(fileConfig);
          victims = parser.loadEMail(fileVictims);
          bodyMessages = parser.loadMessages(fileMessages);
-         System.out.println("size = " + bodyMessages.size());
 
       } catch (IOException e) {
-         LOG.info(e.getMessage());
+         LOG.warning(e.getMessage());
       }
 
       SmtpClient client = new SmtpClient(properties.getProperty("smtpServerAddress"), properties.getProperty("smtpServerPort"));
 
-      /*Message m = new Message();
-
-        m.setBody(bodyMessages.get(r3));
-        m.setFrom(victims.get(r1));
-        m.setTo(new String[]{victims.get(r2)});
-        m.setCc(new String[]{victims.get(4), victims.get(5)});
-       */
       PrankGenerator prankGenerator = new PrankGenerator(nbGroups, bodyMessages, victims);
-      prankGenerator.generate();
+      prankGenerator.generatePrank();
 
-      ArrayList<Message> pranks = prankGenerator.getPranks();
+      ArrayList<Prank> pranks = prankGenerator.getPranks();
+
+      // send the pranks
       try {
-
-         for (Message m : pranks) {
-            client.sendMessage(m);
+         for (Prank p : pranks) {
+            client.sendMessage(p.getMessage());
          }
       } catch (IOException e) {
          LOG.info(e.getMessage());
@@ -66,7 +59,9 @@ public class MailRobot {
    }
 
    public static void main(String args[]) {
+
       MailRobot mailRobot = new MailRobot();
       mailRobot.init();
+
    }
 }

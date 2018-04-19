@@ -8,10 +8,9 @@ public class Prank {
 
     public Prank(){}
 
-    public Prank(Person sender, Group receivers, Message message) {
+    public Prank(Person sender, Group receivers) {
         this.sender = sender;
         this.receivers = receivers;
-        this.message = message;
     }
 
     public void setSender(Person sender) {

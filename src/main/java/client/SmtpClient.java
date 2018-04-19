@@ -61,12 +61,6 @@ public class SmtpClient {
          read();
       }
 
-      // send cc
-      for (String cc : message.getCc()) {
-         write("RCPT TO: <" + cc + ">");
-         read();
-      }
-
       // send data
       write("DATA");
       read();
@@ -75,10 +69,6 @@ public class SmtpClient {
       write("Content-Type: text/plain; charset=UTF-8");
       write("From: " + message.getFrom());
       write("To: " + String.join(",", message.getTo()));
-
-      if (message.getCc().length > 0) {
-         write("Cc: " + String.join(",", message.getCc()));
-      }
 
       write(message.getBody());
       write(".");

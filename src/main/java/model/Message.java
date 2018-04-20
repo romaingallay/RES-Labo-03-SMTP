@@ -1,3 +1,8 @@
+/**
+ * Message class.
+ * @author Romain Gallay
+ * @author Labinot Rashiti
+ */
 package model;
 
 public class Message {

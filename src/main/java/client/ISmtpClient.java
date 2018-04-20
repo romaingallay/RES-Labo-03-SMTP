@@ -1,3 +1,8 @@
+/**
+ * ISmtpClient interface.
+ * @author Romain Gallay
+ * @author Labinot Rashiti
+ */
 package client;
 
 import model.Message;

@@ -108,19 +108,4 @@ public class SmtpClient {
       reader.close();
       clientSocket.close();
    }
-
-   /*
-    public static void main (String args[]) throws IOException{
-        Message m = new Message();
-
-        m.setBody("Hi mate,\r\nI hope you doing well\r\nTake care\r\n\r\nBob");
-        m.setFrom("tom@tommy.io");
-        m.setSubject("well hello there");
-        m.setTo(new String[]{"bob@bobbythebest.bestest"});
-        m.setCc(new String[]{"hiddenspy@spy.spy"});
-
-        SmtpClient client = new SmtpClient("localhost", 2525);
-        client.SendMessage(m);
-
-    }*/
 }

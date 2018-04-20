@@ -1,3 +1,8 @@
+/**
+ * Group class.
+ * @author Romain Gallay
+ * @author Labinot Rashiti
+ */
 package model;
 
 import java.util.ArrayList;

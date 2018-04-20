@@ -1,3 +1,8 @@
+/**
+ * PrankGenerator class.
+ * @author Romain Gallay
+ * @author Labinot Rashiti
+ */
 package model;
 
 import java.util.ArrayList;
@@ -11,8 +16,7 @@ public class PrankGenerator {
    private int numberOfGroups;
    ArrayList<String> messages;
    ArrayList<String> emails;
-
-    private static final Logger LOG = Logger.getLogger(PrankGenerator.class.getName());
+   private static final Logger LOG = Logger.getLogger(PrankGenerator.class.getName());
 
    public PrankGenerator(int numberOfGroups, ArrayList<String> messages, ArrayList<String> emails) {
       this.emails = emails;
@@ -24,7 +28,7 @@ public class PrankGenerator {
 
     public void generatePrank() {
 
-        int numberOfVictims = emails.size();
+       int numberOfVictims = emails.size();
 
        if( numberOfVictims / numberOfGroups < 3) {
            numberOfGroups = numberOfVictims / 3;
@@ -32,7 +36,7 @@ public class PrankGenerator {
                    + numberOfGroups);
        }
 
-        List<Group> groups = generateGroups(new Group(emails));
+       List<Group> groups = generateGroups(new Group(emails));
 
        int index = 0;
 

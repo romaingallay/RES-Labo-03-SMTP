@@ -1,3 +1,8 @@
+/**
+ * Parser class.
+ * @author Romain Gallay
+ * @author Labinot Rashiti
+ */
 package utils;
 
 import model.Message;

@@ -1,4 +1,8 @@
-
+/**
+ * MailRobot class.
+ * @author Romain Gallay
+ * @author Labinot Rashiti
+ */
 import client.SmtpClient;
 import model.Message;
 import model.Person;
@@ -14,6 +18,7 @@ import model.PrankGenerator;
 
 public class MailRobot {
 
+   // configuration
    private static final Logger LOG = Logger.getLogger(MailRobot.class.getName());
    private static String fileConfig = "src/main/resources/config.properties";
    private static String fileVictims = "src/main/resources/victims.utf8";
@@ -25,6 +30,7 @@ public class MailRobot {
 
    public void init() {
 
+      // initialisation
       Parser parser = new Parser();
       Properties properties = null;
       ArrayList<String> victims = new ArrayList<>();
@@ -41,7 +47,6 @@ public class MailRobot {
       }
 
       SmtpClient client = new SmtpClient(properties.getProperty("smtpServerAddress"), properties.getProperty("smtpServerPort"));
-
       PrankGenerator prankGenerator = new PrankGenerator(nbGroups, bodyMessages, victims);
       prankGenerator.generatePrank();
 
